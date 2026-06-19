@@ -17,13 +17,34 @@ $mesa_id    = (int) ($_GET['mesa_id']    ?? 0);
 $cat_id     = (int) ($_GET['cat_id']     ?? 0);
 $busca      = trim($_GET['busca'] ?? '');
 
-$comandaObj   = new Comanda();
+$comandaObj = new Comanda();
 
-$comandaObj->setMesaId($mesa_id);
-$comandaObj->setUsuarioAberturaId($_SESSION['id']);
-$comandaObj->abrir();
+$comandas = $comandaObj->listarPorMesa($mesa_id);
 
-$comanda_id = $comandaObj->getId();
+$comanda = null;
+
+foreach ($comandas as $c) {
+
+    if (
+        $c['status'] != 'FINALIZADA' &&
+        $c['status'] != 'CANCELADA'
+    ) {
+        $comanda = $c;
+        break;
+    }
+}
+
+if ($comanda) {
+
+    $comanda_id = $comanda['id'];
+
+} else {
+
+    $comandaObj->setMesaId($mesa_id);
+    $comandaObj->setUsuarioAberturaId($_SESSION['id']);
+
+    $comanda_id = $comandaObj->abrir();
+}
 
 if (!$mesa_id || !$comanda_id) {
     header('Location: mesas.php');

@@ -73,6 +73,26 @@ $mesas = $mesa->listarTodas();
         .mesa.OCUPADA  { background: #14402F; color: #F5EEDF; }
         .mesa.OCUPADA .st { color: #E9A13B; }
         .mesa.RESERVADA { background: #fff3cd; color: #555; border-color: #ffc107; }
+
+        .btn-sair {
+            color: #F5EEDF;
+            text-decoration: none;
+            font-size: .85rem;
+            padding: 8px 14px;
+            border: 1px solid #E9A13B;
+            border-radius: 8px;
+            transition: all .2s ease;
+        }
+
+        .btn-sair:hover {
+            background: rgba(245, 238, 223, .12);
+            border-color: rgba(245, 238, 223, .5);
+            color: rgba(245, 238, 223);
+        }
+
+        .btn-sair:active {
+            transform: scale(.96);
+        }
     </style>
 </head>
 <body>
@@ -81,7 +101,7 @@ $mesas = $mesa->listarTodas();
     <h1>Botequim · Mesas</h1>
     <div class="spacer"></div>
     <span class="garcom">Garçom: <strong><?= htmlspecialchars($_SESSION['nome'] ?? 'Usuário') ?></strong></span>
-    <a href="login.php?logout=1">Sair</a>
+    <a href="login.php?logout=1" class="btn-sair">Sair</a>
 </div>
 
 <div class="shead">

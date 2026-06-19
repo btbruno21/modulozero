@@ -3,13 +3,14 @@ session_start();
 
 require_once 'classes/Mesa.php';
 require_once 'classes/Comanda.php';
+require_once 'classes/PedidoItem.php';
 
 if (empty($_SESSION['id'])) {
     header('Location: login.php');
     exit();
 }
 
-$id = (int) ($_GET['id'] ?? 0);
+$id = (int)($_GET['id'] ?? 0);
 
 if (!$id) {
     header('Location: mesas.php');
@@ -18,200 +19,260 @@ if (!$id) {
 
 $mesaObj = new Mesa();
 $comandaObj = new Comanda();
-$mesaObj->ocupar($id);
+$pedidoItem = new PedidoItem();
 
 $mesa = $mesaObj->buscarPorId($id);
+$mesaObj->ocupar($id);
 
 if (!$mesa) {
     header('Location: mesas.php');
     exit();
 }
+
 /*
 |--------------------------------------------------------------------------
-| Buscar comanda aberta da mesa
+| Buscar comanda aberta
 |--------------------------------------------------------------------------
 */
+
 $comanda = null;
+
 $comandas = $comandaObj->listarPorMesa($id);
+
 foreach ($comandas as $c) {
     if (
-        $c['status'] !== 'FINALIZADA' &&
-        $c['status'] !== 'CANCELADA'
+        $c['status'] != 'FINALIZADA' &&
+        $c['status'] != 'CANCELADA'
     ) {
         $comanda = $c;
         break;
     }
 }
+
 /*
 |--------------------------------------------------------------------------
-| Liberar mesa sem consumo
+| Liberar mesa
 |--------------------------------------------------------------------------
 */
+
 if (isset($_GET['liberar'])) {
-
     if ($comanda) {
-
-        $comandaObj = new Comanda([
-            'id'      => $comanda['id'],
+        $obj = new Comanda([
+            'id' => $comanda['id'],
             'mesa_id' => $comanda['mesa_id']
         ]);
-
-        $comandaObj->finalizar();
-
+        $obj->finalizar();
     } else {
-
         $mesaObj->liberar($id);
     }
-
     header('Location: mesas.php');
     exit();
 }
 
+/*
+|--------------------------------------------------------------------------
+| Itens e Total
+|--------------------------------------------------------------------------
+*/
+
 $total = 0;
+$itens = [];
 
 if ($comanda) {
-    $total = $comandaObj->calcularTotal($comanda['id']);
+    $total = $comandaObj->calcularTotal(
+        $comanda['id']
+    );
+
+    $itens = $pedidoItem->listarPorComanda(
+        $comanda['id']
+    );
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
+    <html lang="pt-br">
+    <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mesa <?= htmlspecialchars($mesa['numero']) ?></title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        *{
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
         }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            padding-bottom: 100px;
+        body{
+            font-family:Arial,sans-serif;
+            background:#f5f5f5;
         }
 
-        .top {
-            background: #14402F;
-            color: #F5EEDF;
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .top{
+            background:#14402F;
+            color:#F5EEDF;
+            padding:14px 18px;
+            display:flex;
+            align-items:center;
+            gap:12px;
         }
 
-        .top a.back {
-            color: #E9A13B;
-            text-decoration: none;
-            font-size: 1.3rem;
+        .back{
+            color:#E9A13B;
+            text-decoration:none;
+            font-size:1.3rem;
         }
 
-        .top h1 {
-            font-size: 1.1rem;
-            flex: 1;
+        .top h1{
+            flex:1;
+            font-size:1.1rem;
         }
 
-        .top .total {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #E9A13B;
+        .total{
+            font-weight:bold;
+            color:#E9A13B;
         }
 
-        .sub {
-            padding: 12px 18px;
-            background: #fff;
-            border-bottom: 1px solid #eee;
-            font-size: .8rem;
-            color: #7A715F;
+        .sub{
+            padding:12px 18px;
+            background:white;
+            border-bottom:1px solid #eee;
         }
 
-        .empty {
-            text-align: center;
-            padding: 40px 18px;
-            color: #7A715F;
+        .lista{
+            padding:16px;
+            margin-inline: 20%;
         }
 
-        .empty .big {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+        .item{
+            background:white;
+            padding:16px;
+            margin-bottom:12px;
+            border-radius:12px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
         }
 
-        .acts {
-            display: flex;
-            gap: 12px;
-            padding: 0 18px;
-            margin-top: 14px;
+        .item small{
+            display:block;
+            margin-top:4px;
+            color:#777;
         }
 
-        .btn {
-            flex: 1;
-            min-height: 56px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            font-family: inherit;
+        .empty{
+            padding:40px;
+            text-align:center;
+            color:#777;
         }
 
-        .btn.primary {
-            background: #E9A13B;
-            color: #19140F;
+        .big{
+            font-size:2rem;
+            margin-bottom:10px;
         }
 
-        .btn.outline {
-            background: #fff;
-            border: 2px solid rgba(0,0,0,.15);
-            color: #19140F;
+        .acts{
+            display:flex;
+            gap:12px;
+            padding:16px;
+            margin-inline: 40%;
         }
+
+        .btn{
+            flex:1;
+            padding:16px;
+            border-radius:12px;
+            text-decoration:none;
+            text-align:center;
+            font-weight:bold;
+        }
+
+        .primary{
+            background:#E9A13B;
+            color:black;
+        }
+
+        .outline{
+            background:white;
+            border:1px solid #ddd;
+            color:black;
+        }
+
+        .fechar{
+            background:#1F5A3A;
+            color:white;
+        }
+
+        @media (max-width: 1000px){
+            .acts{
+                margin-inline: 30%;
+            }
+        }
+
+        @media (max-width: 768px){
+            .lista{
+                margin-inline: 0;
+            }
+        }
+
+        @media (max-width: 480px){
+            .acts{
+                margin-inline: 20%;
+            }
+        }
+
     </style>
 </head>
+
 <body>
-<div class="top">
-    <a class="back" href="mesas.php">←</a>
-    <h1>Mesa <?= htmlspecialchars($mesa['numero']) ?></h1>
-    <span class="total">
-        R$ 0,00
-    </span>
-</div>
+    <div class="top">
+        <a class="back" href="mesas.php">←</a>
+        <h1>Mesa <?= htmlspecialchars($mesa['numero']) ?></h1>
+        <span class="total">R$ <?= number_format($total,2,',','.') ?></span>
+    </div>
 
-<div class="sub">
-    Comanda vazia
-</div>
+    <?php if(empty($itens)): ?>
+    <div class="sub">Comanda vazia</div>
+        <div class="empty">
+            <div class="big">🍺</div>
+            <p>Comanda vazia.<br>Toque em <strong>Lançar pedido</strong></p>
+        </div>
+    <?php else: ?>
+    <div class="sub"><?= count($itens) ?> itens</div>
+        <div class="lista">
+            <?php foreach($itens as $item): ?>
+        <div class="item">
+        <div>
+            <strong>
+            <?= $item['quantidade'] ?>x
+            <?= htmlspecialchars($item['alimento_nome']) ?>
+            </strong>
+            <?php if(!empty($item['observacao_livre'])): ?>
+            <small><?= htmlspecialchars($item['observacao_livre']) ?></small>
+            <?php endif; ?>
+        </div>
+            <div>R$<?= number_format($item['quantidade']*$item['preco_unitario'],2,',','.')?></div>
+        </div>
+        <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
-<div class="empty">
-    <div class="big">🍺</div>
-    <p>
-        Comanda vazia.<br>
-        Toque em <strong>Lançar pedido</strong> para abrir o cardápio.
-    </p>
-</div>
+    <div class="acts">
+        <a
+            href="cardapio.php?mesa_id=<?= $id ?>"
+            class="btn primary">
+            + Lançar pedido
+            </a>
+    </div>
+    <?php if(empty($itens)):?>
+    <div class="acts">
+        <a href="?id=<?= $id ?>&liberar=1" class="btn outline" onclick="return confirm('Liberar mesa?')">Liberar mesa</a>
+    </div>
+    <?php endif;?>
 
-<div class="acts">
-    <a
-        href="cardapio.php?mesa_id=<?= $id ?>"
-        class="btn primary"
-    >
-        + Lançar pedido
-    </a>
-</div>
-
-<div class="acts" style="margin-top:12px;">
-    <a
-        href="?id=<?= $id ?>&liberar=1"
-        class="btn outline"
-        onclick="return confirm('Liberar mesa sem consumo?')"
-    >
-        Liberar mesa (sem consumo)
-    </a>
-</div>
-
+    <?php if(!empty($itens)):?>
+    <div class="acts">
+        <a class="btn fechar" href="/modulo_zero/pagamento.php?id=<?= $id ?>" class="btn outline"">Fechar conta</a>
+    </div>
+    <?php endif;?>
 </body>
 </html>

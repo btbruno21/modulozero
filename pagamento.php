@@ -1,3 +1,6 @@
+<?php
+$id = $_GET['id'];
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -56,7 +59,7 @@
         .logout:hover {
             color: #fff;
         }
-
+        
         .btn {
             margin-top: 30px;
             padding: 14px 36px;
@@ -91,7 +94,7 @@
 
         <h2>Módulo Zero</h2>
 
-        <a href="login.php?logout=1" class="logout">Sair</a>
+        <a href="mesa.php?id=<?= $id ?>&liberar=1" class="logout" onclick="return confirm('Liberar mesa?')">Liberar mesa</a>
     </div>
 </body>
 </html>

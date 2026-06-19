@@ -4,6 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 session_start();
 require_once 'classes/Alimento.php';
+require_once 'classes/PedidoItem.php';
 require_once 'classes/Pedido.php';
 require_once 'classes/Observacao.php';
 
@@ -32,30 +33,42 @@ if (!$produto || !$produto['ativo']) {
 $erro = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $quantidade  = max(1, (int) ($_POST['quantidade'] ?? 1));
-    $observacao  = trim($_POST['observacao'] ?? '');
 
-    $pedidoObj = new Pedido();
-    $resultado = $pedidoObj->criar($comanda_id, [
-        [
-            'produto_id' => $produto_id,
-            'quantidade' => $quantidade,
-            'observacao' => $observacao ?: null,
-        ]
-    ]);
+    $quantidade = max(1, (int)($_POST['quantidade'] ?? 1));
+    $observacao = trim($_POST['observacao'] ?? '');
+    try {
+        $pedido = new Pedido();
+        $pedido->setComandaId($comanda_id);
+        $pedido->setUsuarioId($_SESSION['id']);
 
-    if ($resultado) {
-        header("Location: comanda.php?mesa_id=$mesa_id");
-        exit();
-    } else {
-        $erro = 'Erro ao registrar pedido. Tente novamente.';
+        $pedidoId = $pedido->salvar();
+
+        $item = new PedidoItem();
+
+        $item->setPedidoId($pedidoId);
+        $item->setAlimentoId($produto_id);
+        $item->setQuantidade($quantidade);
+        $item->setPrecoUnitario($produto['preco']);
+        $item->setObservacaoLivre(
+            !empty($observacao)
+                ? $observacao
+                : null
+        );
+        $itemId = $item->salvar();
+        if ($itemId) {
+            header("Location: mesa.php?id=$mesa_id");
+            exit();
+        }
+        $erro = 'Erro ao registrar pedido.';
+    } catch (Exception $e) {
+        $erro = $e->getMessage();
     }
 }
 
-$pedidoItem = new Observacao;
-$objPedidoItem = $pedidoItem->observacaoAlimento($produto_id);
+$Observacao = new Observacao;
+$objObservacao = $Observacao->observacaoAlimento($produto_id);
 
-$OBS_RAPIDAS = array_column($objPedidoItem, 'descricao');
+$OBS_RAPIDAS = array_column($objObservacao, 'descricao');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -163,13 +176,11 @@ $OBS_RAPIDAS = array_column($objPedidoItem, 'descricao');
         </div>
         <input type="hidden" name="quantidade" id="qtyInput" value="1">
         
-        <label>Observações rápidas</label>
-        <?php if(empty($OBS_RAPIDAS)):?>
-        <div class="chips">
+        <!-- <div class="chips">
             <label class="chip-label">Adicionar Observações</label>
-        </div>
-        <?php endif; ?>
+        </div> -->
         <?php if(!empty($OBS_RAPIDAS)):?>
+        <label>Observações rápidas</label>
         <div class="chips">
             <?php foreach ($OBS_RAPIDAS as $obs): ?>
                 <label class="chip-label">

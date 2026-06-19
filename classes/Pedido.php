@@ -72,4 +72,66 @@ class Pedido
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function listarTodos()
+    {
+        $sql = "SELECT
+                    p.id,
+                    p.comanda_id,
+                    p.criado_em,
+                    c.mesa_id,
+                    m.numero AS mesa
+                FROM pedido p
+
+                JOIN comanda c
+                    ON c.id = p.comanda_id
+
+                LEFT JOIN mesa m
+                    ON m.id = c.mesa_id
+
+                ORDER BY p.criado_em DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function listarPendentesPorSetor($setor)
+    {
+        $sql = "SELECT DISTINCT
+                    p.id,
+                    p.comanda_id,
+                    p.criado_em,
+                    c.mesa_id,
+                    m.numero AS mesa
+                FROM pedido p
+
+                JOIN comanda c
+                    ON c.id = p.comanda_id
+
+                LEFT JOIN mesa m
+                    ON m.id = c.mesa_id
+
+                JOIN pedido_item pi
+                    ON pi.pedido_id = p.id
+
+                JOIN alimento a
+                    ON a.id = pi.alimento_id
+
+                JOIN setor s
+                    ON s.id = a.setor_id
+
+                WHERE s.nome = :setor
+                AND pi.status IN ('FILA', 'PREPARANDO')
+
+                ORDER BY p.criado_em";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':setor', $setor);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

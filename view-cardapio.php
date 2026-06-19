@@ -111,7 +111,7 @@ if ($busca !== '') {
 
 <div class="cats">
     <a
-        href="/modulo_zero/view-cardapio.php"
+        href="view-cardapio.php"
         class="cat <?= !$cat_id ? 'active' : '' ?>"
     >Tudo</a>
     <?php foreach ($categorias as $cat): ?>
