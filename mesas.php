@@ -68,11 +68,34 @@ $mesas = $mesa->listarTodas();
         .mesa .n { font-size: 2rem; font-weight: 700; }
         .mesa .st { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 800; }
 
-        .mesa.LIVRE    { background: #fff; color: #7A715F; border-color: rgba(0,0,0,.1); }
-        .mesa.LIVRE .st { color: #2E8B57; }
+        .mesa.LIVRE{
+            background: #fff;
+            color: #7A715F;
+            border-color: rgba(0,0,0,.1);
+        }
+
+        .mesa.LIVRE .st{ 
+            color: #2E8B57;
+        }
+
         .mesa.OCUPADA  { background: #14402F; color: #F5EEDF; }
         .mesa.OCUPADA .st { color: #E9A13B; }
         .mesa.RESERVADA { background: #fff3cd; color: #555; border-color: #ffc107; }
+
+        .mesa.RESERVA {
+            background: rgb(255, 193, 7, 0.5) /* 40% */;
+            color: #856404;
+            border-color: #e0a800;
+        }
+
+        .mesa.RESERVA .st {
+            color: #856404;
+            font-size: .70rem !important;
+        }
+
+        .mesa.RESERVA .n {
+            color: #856404;
+        }
 
         .btn-sair {
             color: #F5EEDF;
@@ -129,6 +152,10 @@ $mesas = $mesa->listarTodas();
             <!-- <span class="st">MESA</span> -->
         </a>
     <?php endforeach; ?>
+    <a href="reservas.php" class="mesa RESERVA">
+        <span class="n">+</span>
+        <span class="st">Reservar Mesa</span>
+    </a>
 </div>
 
 <?php include 'inc/footer-func.php'; ?>

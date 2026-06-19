@@ -173,7 +173,7 @@ if ($comanda) {
         .acts{
             display:flex;
             gap:12px;
-            padding:16px;
+            padding:6px;
             margin-inline: 40%;
         }
 
@@ -271,7 +271,7 @@ if ($comanda) {
 
     <?php if(!empty($itens)):?>
     <div class="acts">
-        <a class="btn fechar" href="/modulo_zero/pagamento.php?id=<?= $id ?>" class="btn outline"">Fechar conta</a>
+        <a class="btn fechar" href="pagamento.php?id=<?= $id ?>" class="btn outline"">Fechar conta</a>
     </div>
     <?php endif;?>
 </body>
