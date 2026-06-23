@@ -119,6 +119,7 @@ class PedidoItem
                 JOIN pedido p ON p.id = pi.pedido_id
                 JOIN alimento a ON a.id = pi.alimento_id
                 WHERE p.comanda_id = :comanda_id
+                AND pi.status <> 'CANCELADO'
                 ORDER BY pi.id";
 
         $stmt = $this->pdo->prepare($sql);

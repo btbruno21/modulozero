@@ -87,6 +87,18 @@ if ($comanda) {
         $comanda['id']
     );
 }
+
+if (isset($_GET['cancelar_item'])) {
+
+    $item = new PedidoItem([
+        'id' => (int)$_GET['cancelar_item']
+    ]);
+
+    $item->cancelar();
+
+    header("Location: mesa.php?id=".$id);
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -220,6 +232,30 @@ if ($comanda) {
             }
         }
 
+        .valor-acoes{
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+
+        .trash{
+            text-decoration:none;
+            font-size:24px;
+            transition:transform .2s ease;
+            display:inline-block;
+        }
+
+        .trash:hover{
+            animation:shake .4s ease-in-out;
+        }
+
+        @keyframes shake{
+            0%,100%{transform:rotate(0deg);}
+            25%{transform:rotate(-15deg);}
+            50%{transform:rotate(15deg);}
+            75%{transform:rotate(-10deg);}
+        }
+
     </style>
 </head>
 
@@ -250,7 +286,18 @@ if ($comanda) {
             <small><?= htmlspecialchars($item['observacao_livre']) ?></small>
             <?php endif; ?>
         </div>
-            <div>R$<?= number_format($item['quantidade']*$item['preco_unitario'],2,',','.')?></div>
+            <div class="valor-acoes">
+                <span>
+                    R$<?= number_format($item['quantidade']*$item['preco_unitario'],2,',','.') ?>
+                </span>
+                <a href="?id=<?= $id ?>&cancelar_item=<?= $item['id'] ?>"
+                    class="trash"
+                    onclick="return confirm('Remover item?')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#e74c3c">
+                        <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm1 6h2v8h-2V9zm4 0h2v8h-2V9zM7 9h2v8H7V9zm-1 11h12l1-12H5l1 12z"/>
+                    </svg>
+                </a>
+            </div>
         </div>
         <?php endforeach; ?>
         </div>
