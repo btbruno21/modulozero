@@ -7,9 +7,9 @@ $id = $_GET['id'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Em Breve</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="img/mdzero.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+
     <style>
         * {
             margin: 0;
@@ -99,7 +99,7 @@ $id = $_GET['id'];
 
         <h2>Módulo Zero</h2>
 
-        <a href="mesa.php?id=<?= $id ?>&liberar=1" class="logout" onclick="return confirm('Liberar mesa?')">Liberar mesa</a>
+        <a href="mesas.php" class="logout">Voltar</a>
     </div>
 </body>
 </html>

@@ -60,19 +60,19 @@ body {
 
     <a href="mesas.php"
        class="<?= $paginaAtual === 'mesas.php' ? 'active' : '' ?>">
-        <span class="ic">🍽️</span>
+        <span class="ic"><img src="img/restaurante.png" alt="mesas" style="width:36px"></span>
         <span>Mesas</span>
     </a>
 
     <a href="view-cardapio.php"
        class="<?= $paginaAtual === 'view-cardapio.php' ? 'active' : '' ?>">
-        <span class="ic">📋</span>
+        <span class="ic"><img src="img/cardapio.png" alt="cardapio icones" style="width:36px"></span>
         <span>Cardápio</span>
     </a>
 
     <a href="pedidos.php"
        class="<?= $paginaAtual === 'pedidos.php' ? 'active' : '' ?>">
-        <span class="ic">🔔</span>
+        <span class="ic"><img src="img/servindo-comida.png" alt="pedidos" style="width:36px;"></span>
         <span>Pedidos</span>
     </a>
 

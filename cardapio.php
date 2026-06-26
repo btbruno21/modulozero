@@ -72,6 +72,7 @@ if ($busca !== '') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/x-icon" href="img/mdzero.ico">
     <title>Cardápio · Mesa <?= $mesa_id ?></title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -93,7 +94,7 @@ if ($busca !== '') {
             padding: 0 16px; font-size: 1rem; font-family: inherit;
         }
         .search button {
-            min-height: 48px; padding: 0 18px; border-radius: 12px;
+            min-height: 48px; padding: 0px 16px; border-radius: 12px;
             background: #14402F; color: #F5EEDF; border: none;
             font-weight: 700; cursor: pointer; font-family: inherit;
         }
@@ -134,9 +135,20 @@ if ($busca !== '') {
             text-decoration: none; display: flex; align-items: center; justify-content: center;
             cursor: pointer; font-family: inherit;
         }
-        .btn-add:hover { background: #c3e6cb; }
 
-        .empty { text-align: center; padding: 40px 18px; color: #7A715F; }
+        .btn-add:hover {
+            background: #c3e6cb;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px 18px;
+            color: #7A715F;
+        }
+
+        .lupa {
+            width: 20px;
+        }
     </style>
 </head>
 <body>
@@ -153,7 +165,7 @@ if ($busca !== '') {
         <input type="hidden" name="comanda_id" value="<?= $comanda_id ?>">
         <input type="hidden" name="cat_id" value="<?= $cat_id ?>">
         <input type="search" name="busca" placeholder="Buscar item…" value="<?= htmlspecialchars($busca) ?>">
-        <button type="submit">🔍</button>
+        <button type="submit"><img class="lupa" src="./img/lupa.png"></button>
     </form>
 </div>
 

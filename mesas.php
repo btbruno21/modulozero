@@ -20,6 +20,7 @@ $mesas = $mesa->listarTodas();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Mesas</title>
+    <link rel="icon" type="image/x-icon" href="img/mdzero.ico">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: Arial, sans-serif; background: #f5f5f5; }
@@ -37,7 +38,7 @@ $mesas = $mesa->listarTodas();
         .top .garcom { font-size: .85rem; opacity: .8; }
         .top a { color: #E9A13B; font-size: .8rem; }
 
-        .shead { padding: 20px 18px 10px; }
+        .shead { padding: 10px 18px 10px; }
         .shead h2 { font-size: 1.3rem; color: #14402F; margin-bottom: 4px; }
         .shead p { font-size: .8rem; color: #7A715F; }
 
